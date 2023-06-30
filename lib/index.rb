@@ -147,8 +147,7 @@ rescue RubocopOffenseException
   # Uncomment for publishing comments on github actions output.
   # update_check(id, 'failure', nil)
   raise
-rescue StandardError => e
-  puts e
+rescue StandardError
   raise
 end
 
