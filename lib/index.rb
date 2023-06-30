@@ -139,7 +139,7 @@ def run
   if conclusion == 'failure'
     puts output[:summary]
     output['annotations'].each do |annotation|
-      puts "L#{annotation['start_line']}-L#{annotation['end_line']}:#{annotation['message']}"
+      puts "#{annotation['path']}:L#{annotation['start_line']}-L#{annotation['end_line']}:#{annotation['message']}"
     end
     raise RubocopOffenseException
   end

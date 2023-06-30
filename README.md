@@ -30,7 +30,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Rubocop checks
-        uses: pedrogglima/github-actions-rubocop@0.1.4
+        uses: pedrogglima/github-actions-rubocop@0.1.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
