@@ -4,12 +4,19 @@ require 'net/http'
 require 'json'
 require 'time'
 
+class RubocopOffenseException < StandardError
+  def initialize(msg = 'Rubocop found offenses')
+    super(msg)
+  end
+end
+
 @GITHUB_SHA = ENV['GITHUB_SHA']
 @GITHUB_EVENT_PATH = ENV['GITHUB_EVENT_PATH']
 @GITHUB_TOKEN = ENV['GITHUB_TOKEN']
 @GITHUB_WORKSPACE = ENV['GITHUB_WORKSPACE']
 
 @RUBOCOP_ARGS = ENV['RUBOCOP_ARGS']
+@RUBOCOP_LINT_FILES = ENV['RUBOCOP_LINT_FILES']
 
 @event = JSON.parse(File.read(ENV['GITHUB_EVENT_PATH']))
 @repository = @event['repository']
@@ -17,6 +24,7 @@ require 'time'
 @repo = @repository['name']
 
 @check_name = 'Rubocop'
+@rubocop_cmd = "rubocop --format json #{@RUBOCOP_ARGS} #{@RUBOCOP_LINT_FILES}"
 
 @headers = {
   "Content-Type": 'application/json',
@@ -75,8 +83,11 @@ end
 def run_rubocop
   annotations = []
   errors = nil
+
+  puts "Running rubocop: #{@rubocop_cmd}"
+
   Dir.chdir(@GITHUB_WORKSPACE) do
-    errors = JSON.parse(`rubocop --format json #{@RUBOCOP_ARGS}`)
+    errors = JSON.parse(`#{@rubocop_cmd}`)
   end
   conclusion = 'success'
   count = 0
@@ -130,12 +141,14 @@ def run
     output['annotations'].each do |annotation|
       puts "L#{annotation['start_line']}-L#{annotation['end_line']}:#{annotation['message']}"
     end
-    raise 'Rubocop found offenses'
+    raise RubocopOffenseException
   end
-rescue StandardError => e
-  puts e
+rescue RubocopOffenseException
   # Uncomment for publishing comments on github actions output.
   # update_check(id, 'failure', nil)
+  raise
+rescue StandardError => e
+  puts e
   raise
 end
 
