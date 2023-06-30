@@ -112,26 +112,26 @@ def run_rubocop
 end
 
 def run
-  id = create_check
-  begin
-    results = run_rubocop
-    conclusion = results['conclusion']
-    output = results['output']
+  # id = create_check
 
-    update_check(id, conclusion, output)
+  results = run_rubocop
+  conclusion = results['conclusion']
+  output = results['output']
 
-    # Print offenses
-    if conclusion == 'failure'
-      puts output[:summary]
-      output['annotations'].each do |annotation|
-        puts "L#{annotation['start_line']}-L#{annotation['end_line']}:#{annotation['message']}"
-      end
-      raise 'Rubocop found offenses'
+  # update_check(id, conclusion, output)
+
+  # Print offenses
+  if conclusion == 'failure'
+    puts output[:summary]
+    output['annotations'].each do |annotation|
+      puts "L#{annotation['start_line']}-L#{annotation['end_line']}:#{annotation['message']}"
     end
-  rescue StandardError
-    update_check(id, 'failure', nil)
-    raise
+    raise 'Rubocop found offenses'
   end
+rescue StandardError => e
+  puts e
+  # update_check(id, 'failure', nil)
+  raise
 end
 
 run
