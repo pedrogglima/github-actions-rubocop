@@ -112,12 +112,14 @@ def run_rubocop
 end
 
 def run
+  # Uncomment for publishing comments on github actions output.
   # id = create_check
 
   results = run_rubocop
   conclusion = results['conclusion']
   output = results['output']
 
+  # Uncomment for publishing comments on github actions output.
   # update_check(id, conclusion, output)
 
   # Print offenses
@@ -130,6 +132,7 @@ def run
   end
 rescue StandardError => e
   puts e
+  # Uncomment for publishing comments on github actions output.
   # update_check(id, 'failure', nil)
   raise
 end
