@@ -125,15 +125,13 @@ def run_rubocop
 end
 
 def run
-  # Uncomment for publishing comments on github actions output.
-  # id = create_check
+  id = create_check
 
   results = run_rubocop
   conclusion = results['conclusion']
   output = results['output']
 
-  # Uncomment for publishing comments on github actions output.
-  # update_check(id, conclusion, output)
+  update_check(id, conclusion, output)
 
   # Print offenses
   if conclusion == 'failure'
@@ -144,8 +142,7 @@ def run
     raise RubocopOffenseException
   end
 rescue RubocopOffenseException
-  # Uncomment for publishing comments on github actions output.
-  # update_check(id, 'failure', nil)
+  update_check(id, 'failure', nil)
   raise
 rescue StandardError
   raise
